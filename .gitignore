@@ -1,0 +1,32 @@
+# Virtual Environment (가상환경 제외)
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE & OS 관련 파일 제외 (VSCode, JetBrains, macOS, Windows 등)
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Environment Variables (환경 변수 파일)
+.env
+*.env
+
+# Dependencies (패키지 관련)
+Pipfile
+Pipfile.lock
+
+# Logs & Temp Files (로그 및 임시 파일)
+*.log
+logs/
+debug.log
+
+# Database & Migrations (데이터베이스 및 마이그레이션 파일)
+db.sqlite3
+migrations/
+alembic/
+
+# Docker 관련 제외
+docker-compose.override.yml
