@@ -1,5 +1,5 @@
-```markdown
-# 🎮 Pixel Pastures - Setup Guide (설치 가이드)
+
+# 🎮 Pixel Pastures - Basic Server Setting
 
 ## 📌 1. Python Virtual Environment Setup (Python 가상환경 설정)
 ```bash
@@ -40,8 +40,7 @@ uvicorn main:app --reload
 ```bash
 python -m grpc_tools.protoc -I=proto --python_out=. --grpc_python_out=. proto/game.proto
 ```
-✅ **This command generates the following files:**  
-✅ **다음 파일들이 생성됩니다:**  
+✅ **This command generates the following files (다음 파일들이 생성됩니다):**  
 - `game_pb2.py`
 - `game_pb2_grpc.py`
 
@@ -54,10 +53,10 @@ These files are required for gRPC server and client communication.
 ```bash
 python grpc_server.py
 ```
-✅ **If the server is running successfully, you should see the following message in the terminal:**  
-✅ **정상적으로 실행되면 터미널에서 다음 메시지를 확인할 수 있습니다:**  
+✅ **If the server is running successfully, the following message will appear in the terminal.**  
+✅ **서버가 정상적으로 실행되면, 터미널에 다음 메시지가 출력됩니다.**  
 ```bash
-✅ gRPC Server running on port 50051...
+gRPC Server running on port 50051...
 ```
 
 ---
