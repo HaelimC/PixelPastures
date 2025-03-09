@@ -60,5 +60,62 @@ python grpc_server.py
 ✅ gRPC Server running on port 50051...
 ```
 
+---
 
+## 📌 6. Run PostgreSQL with Docker (Docker로 PostgreSQL 실행)
+```bash
+docker run --name postgres \
+  -e POSTGRES_USER=admin \
+  -e POSTGRES_PASSWORD=admin \
+  -e POSTGRES_DB=pixel_pastures \
+  -p 5432:5432 \
+  -d postgres
 ```
+✅ **This command will start a PostgreSQL container with:**  
+✅ **이 명령어는 다음 설정으로 PostgreSQL 컨테이너를 실행합니다:**  
+- **Username:** `admin`
+- **Password:** `admin`
+- **Database Name:** `pixel_pastures`
+- **Port:** `5432`
+
+### 🔹 Check running PostgreSQL container (PostgreSQL 실행 상태 확인)
+```bash
+docker ps
+```
+✅ **If PostgreSQL is running successfully, you should see it listed in the output.**  
+✅ **PostgreSQL이 정상적으로 실행 중이라면, 목록에 표시됩니다.**
+
+### 🔹 Restart or Stop PostgreSQL container (PostgreSQL 컨테이너 재시작 또는 중지)
+```bash
+docker restart postgres  # Restart (재시작)
+docker stop postgres     # Stop (중지)
+```
+
+---
+
+## 📌 7. Connect to PostgreSQL (PostgreSQL 접속)
+```bash
+docker exec -it postgres psql -U admin -d pixel_pastures
+```
+✅ **Now you can execute SQL commands inside PostgreSQL.**  
+✅ **이제 PostgreSQL 내부에서 SQL 명령어를 실행할 수 있습니다.**
+
+### 🔹 List all tables (현재 데이터베이스의 테이블 확인)
+```sql
+\dt
+```
+
+### 🔹 Exit PostgreSQL shell (PostgreSQL 셸 종료)
+```sql
+\q
+```
+
+---
+
+## 📌 8. Apply Database Migrations in FastAPI (FastAPI에서 데이터베이스 적용)
+```bash
+uvicorn main:app --reload
+```
+✅ **If everything is set up correctly, FastAPI will create the required tables in PostgreSQL.**  
+✅ **설정이 올바르면, FastAPI가 PostgreSQL에 필요한 테이블을 생성합니다.**
+

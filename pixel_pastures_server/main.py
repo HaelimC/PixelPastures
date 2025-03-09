@@ -1,24 +1,58 @@
 # Import FastAPI framework
-# FastAPI를 가져와서 사용할 준비를 합니다.
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+# Import PostgreSQL Library
+from sqlalchemy.orm import Session
+from database import SessionLocal, init_db
+from models import Player
+import logging
 
+logging.basicConfig(level=logging.INFO)
 # Create a FastAPI application instance
-# FastAPI 서버 인스턴스를 생성합니다.
-app = FastAPI()
+app = FastAPI(debug=True)
+
+# create DB before server running (don't forget!)
+init_db()
 
 # Define an endpoint (route)
-# @app.get("/") -> HTTP GET 요청을 처리하는 엔드포인트를 정의합니다.
+# @app.get("/") -> HTTP GET request
 @app.get("/") 
 def home():
     # When accessing the root URL ("/"), return a JSON response
-    # 루트 경로("/")로 요청이 들어오면 JSON 응답을 반환합니다.
     return {"message": "Pixel Pastures Server Running!"}
 
 # Run the server only if this script is executed directly
-# 이 파일이 직접 실행될 때만 실행 (다른 파일에서 import될 경우 실행되지 않음)
 if __name__ == "__main__":  
-    import uvicorn  # Uvicorn: ASGI 서버 실행을 위한 모듈
+    import uvicorn  # Uvicorn: Module for running ASGI Server
     
-    # Run FastAPI server with Uvicorn
-    # FastAPI 서버 실행 (호스트: 127.0.0.1, 포트: 8000, 코드 변경 시 자동 재시작)
+    # Run FastAPI server with Uvicorn (host: 127.0.0.1, port: 8000)
     uvicorn.run(app, host="127.0.0.1", port=8000, reload=True) 
+
+# get DB Session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# save player data (POST)
+@app.post("/players/")
+def create_player(player_id: str, db: Session = Depends(get_db)):
+    try:
+        player = Player(player_id=player_id)
+        db.add(player)
+        db.commit()
+        db.refresh(player)
+        return {"message": f"Player {player_id} created!", "player": player}
+    except Exception as e:
+        logging.info(f"create 오류: {str(e)}")
+        return {"error": str(e)}
+
+# get player data (GET)
+@app.get("/players/{player_id}")
+def get_player(player_id: str, db: Session = Depends(get_db)):
+    player = db.query(Player).filter(Player.player_id == player_id).first()
+    if not player:
+        return {"error": "Player not found"}
+    return {"player": player}
+
