@@ -26,7 +26,9 @@ if _version_not_supported:
 
 
 class GameServiceStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """서비스 정의 (서버에서 제공하는 기능)
+    Define the service (functions provided by the server)
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -42,10 +44,14 @@ class GameServiceStub(object):
 
 
 class GameServiceServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """서비스 정의 (서버에서 제공하는 기능)
+    Define the service (functions provided by the server)
+    """
 
     def GetPlayerState(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetPlayerState 메서드 정의 (요청을 보내면 응답을 반환함)
+        GetPlayerState method: Receives a request and returns a response
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -67,7 +73,9 @@ def add_GameServiceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class GameService(object):
-    """Missing associated documentation comment in .proto file."""
+    """서비스 정의 (서버에서 제공하는 기능)
+    Define the service (functions provided by the server)
+    """
 
     @staticmethod
     def GetPlayerState(request,

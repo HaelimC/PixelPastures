@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\ngame.proto\"\"\n\rPlayerRequest\x12\x11\n\tplayer_id\x18\x01 \x01(\t\"M\n\x0ePlayerResponse\x12\x11\n\tplayer_id\x18\x01 \x01(\t\x12\t\n\x01x\x18\x02 \x01(\x02\x12\t\n\x01y\x18\x03 \x01(\x02\x12\x12\n\nfarm_level\x18\x04 \x01(\x05\x32@\n\x0bGameService\x12\x31\n\x0eGetPlayerState\x12\x0e.PlayerRequest\x1a\x0f.PlayerResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\ngame.proto\"\"\n\rPlayerRequest\x12\x11\n\tplayer_id\x18\x01 \x01(\t\"c\n\x0ePlayerResponse\x12\x11\n\tplayer_id\x18\x01 \x01(\t\x12\x0e\n\x01x\x18\x02 \x01(\x02H\x00\x88\x01\x01\x12\x0e\n\x01y\x18\x03 \x01(\x02H\x01\x88\x01\x01\x12\x12\n\nfarm_level\x18\x04 \x01(\x05\x42\x04\n\x02_xB\x04\n\x02_y2@\n\x0bGameService\x12\x31\n\x0eGetPlayerState\x12\x0e.PlayerRequest\x1a\x0f.PlayerResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -34,7 +34,7 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_PLAYERREQUEST']._serialized_start=14
   _globals['_PLAYERREQUEST']._serialized_end=48
   _globals['_PLAYERRESPONSE']._serialized_start=50
-  _globals['_PLAYERRESPONSE']._serialized_end=127
-  _globals['_GAMESERVICE']._serialized_start=129
-  _globals['_GAMESERVICE']._serialized_end=193
+  _globals['_PLAYERRESPONSE']._serialized_end=149
+  _globals['_GAMESERVICE']._serialized_start=151
+  _globals['_GAMESERVICE']._serialized_end=215
 # @@protoc_insertion_point(module_scope)
