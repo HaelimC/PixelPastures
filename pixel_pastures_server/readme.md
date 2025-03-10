@@ -118,3 +118,26 @@ uvicorn main:app --reload
 ✅ **If everything is set up correctly, FastAPI will create the required tables in PostgreSQL.**  
 ✅ **설정이 올바르면, FastAPI가 PostgreSQL에 필요한 테이블을 생성합니다.**
 
+---
+
+
+## 📌 9. Run gRPC Client (gRPC 클라이언트 실행)
+```bash
+python grpc_client.py
+```
+✅ **If the client is running successfully, you should see the following messages in the terminal:**  
+✅ **클라이언트가 정상적으로 실행되면, 터미널에 다음 메시지가 출력됩니다:**  
+
+### **📌 When a player exists (플레이어가 존재할 때)**
+```bash
+Player Found!!
+player_id: player123
+x: 0.0
+y: 0.0
+farm_level: 1
+```
+
+### **📌 When a player does not exist (플레이어가 존재하지 않을 때)**
+```bash
+Error: StatusCode.NOT_FOUND - Player 'unknown_player' does not exist!
+```
