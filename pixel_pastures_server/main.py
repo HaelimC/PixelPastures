@@ -2,32 +2,45 @@
 from fastapi import FastAPI, Depends
 # Import PostgreSQL Library
 from sqlalchemy.orm import Session
-from database import SessionLocal, init_db
+# Import Redis and DB Library
+from database import SessionLocal, init_db, init_redis, close_redis, redis
+from contextlib import asynccontextmanager
 from models import Player
 import logging
 
 logging.basicConfig(level=logging.INFO)
-# Create a FastAPI application instance
-app = FastAPI(debug=True)
 
-# create DB before server running (don't forget!)
+# Lifecycle event handler for FastAPI (Runs on startup and shutdown)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("🚀 FastAPI 서버 시작: Redis 초기화 중...")
+    app.state.redis = await init_redis()  # Redis 초기화
+    print("✅ Redis 초기화 완료!") 
+    yield
+    print("🛑 FastAPI 서버 종료: Redis 연결 닫기...")
+    await close_redis()  # Redis 종료
+
+# Create a FastAPI application instance
+app = FastAPI(lifespan=lifespan)
+
+# Initialize PostgreSQL tables before starting the server
 init_db()
 
-# Define an endpoint (route)
+# Root Endpoint (Home Page)
 # @app.get("/") -> HTTP GET request
 @app.get("/") 
 def home():
     # When accessing the root URL ("/"), return a JSON response
     return {"message": "Pixel Pastures Server Running!"}
 
-# Run the server only if this script is executed directly
+# Run FastAPI server (Only when executed directly)
 if __name__ == "__main__":  
     import uvicorn  # Uvicorn: Module for running ASGI Server
     
     # Run FastAPI server with Uvicorn (host: 127.0.0.1, port: 8000)
     uvicorn.run(app, host="127.0.0.1", port=8000, reload=True) 
 
-# get DB Session
+# Database session generator (Dependency injection for FastAPI)
 def get_db():
     db = SessionLocal()
     try:
@@ -35,9 +48,19 @@ def get_db():
     finally:
         db.close()
 
-# save player data (POST)
+# Create a new player (POST request)
 @app.post("/players/")
 def create_player(player_id: str, db: Session = Depends(get_db)):
+    """
+    Endpoint to create a new player in the database.
+
+    - **Input**: `player_id` (Query Parameter)
+    - **Process**:
+        1. Create a new `Player` object
+        2. Save it to the database and commit
+        3. Return the stored data
+    - **Output**: Player information or error message
+    """
     try:
         player = Player(player_id=player_id)
         db.add(player)
@@ -48,11 +71,57 @@ def create_player(player_id: str, db: Session = Depends(get_db)):
         logging.info(f"create 오류: {str(e)}")
         return {"error": str(e)}
 
-# get player data (GET)
+# Retrieve player data (GET request)
 @app.get("/players/{player_id}")
-def get_player(player_id: str, db: Session = Depends(get_db)):
+async def get_player(player_id: str, db: Session = Depends(get_db)): #async for await
+    """
+    Endpoint to retrieve player information (Uses Redis caching).
+
+    - **Input**: `player_id` (Path Parameter)
+    - **Process**:
+        1. Check Redis for cached player data
+        2. If not cached, fetch data from PostgreSQL and store it in Redis
+    - **Output**: Player information or error message
+    """
+    redis = app.state.redis  # Get Redis instance from FastAPI state
+
+    # Check if player data exists in Redis cache
+    cached_player = await redis.get(f"player:{player_id}")
+
+    if cached_player:
+        return {"player": eval(cached_player), "source": "cache"}
+
+    # If not cached, fetch from the database
     player = db.query(Player).filter(Player.player_id == player_id).first()
+
     if not player:
         return {"error": "Player not found"}
-    return {"player": player}
+
+    # Store fetched data in Redis (expires in 60 seconds)
+    await redis.setex(f"player:{player_id}", 60, str({
+        "player_id": player.player_id,
+        "x": player.x,
+        "y": player.y,
+        "farm_level": player.farm_level
+    }))
+
+    return {"player": player, "source": "database"}
+
+# Redis Debug Endpoint (Check Redis connection status)
+@app.get("/debug/redis")
+async def debug_redis():
+    """
+    Debugging endpoint to check Redis connection status.
+
+    - **Output**: Redis connection status and ping response
+    """
+    redis = app.state.redis # Get Redis instance from FastAPI state
+    print(f"🔍 DEBUG: redis 상태 확인 → {redis}")  # ✅ 추가된 로그
+    if redis is None:
+        return {"error": "❌ Redis가 None 상태입니다!"}
+    try:
+        pong = await redis.ping()
+        return {"message": "✅ Redis 연결 정상!", "ping": pong}
+    except Exception as e:
+        return {"error": f"❌ Redis 연결 오류: {e}"}
 

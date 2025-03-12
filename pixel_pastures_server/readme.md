@@ -1,4 +1,3 @@
-
 # 🎮 Pixel Pastures - Basic Server Setting
 
 ## 📌 1. Python Virtual Environment Setup (Python 가상환경 설정)
@@ -111,7 +110,42 @@ docker exec -it postgres psql -U admin -d pixel_pastures
 
 ---
 
-## 📌 8. Apply Database Migrations in FastAPI (FastAPI에서 데이터베이스 적용)
+## 📌 8. Run Redis with Docker (Docker로 Redis 실행)
+```bash
+docker run --name redis \
+  -p 6379:6379 \
+  -d redis
+```
+✅ **This command starts a Redis container with:**  
+✅ **이 명령어는 다음 설정으로 Redis 컨테이너를 실행합니다:**  
+- **Port:** `6379` (default)
+
+### 🔹 Check running Redis container (Redis 실행 상태 확인)
+```bash
+docker ps
+```
+✅ **If Redis is running successfully, you should see it in the list.**  
+✅ **Redis가 정상적으로 실행 중이라면, 목록에 표시됩니다.**
+
+### 🔹 Restart or Stop Redis container (Redis 컨테이너 재시작 또는 중지)
+```bash
+docker restart redis  # Restart (재시작)
+docker stop redis     # Stop (중지)
+```
+
+### 🔹 Test Redis Connection (Redis 연결 테스트)
+```bash
+docker exec -it redis redis-cli ping
+```
+✅ **If Redis is working properly, you should see the response:**  
+✅ **Redis가 정상적으로 작동하면 다음 응답이 표시됩니다:**  
+```bash
+PONG
+```
+
+---
+
+## 📌 9. Apply Database Migrations in FastAPI (FastAPI에서 데이터베이스 적용)
 ```bash
 uvicorn main:app --reload
 ```
@@ -120,8 +154,7 @@ uvicorn main:app --reload
 
 ---
 
-
-## 📌 9. Run gRPC Client (gRPC 클라이언트 실행)
+## 📌 10. Run gRPC Client (gRPC 클라이언트 실행)
 ```bash
 python grpc_client.py
 ```
@@ -141,3 +174,23 @@ farm_level: 1
 ```bash
 Error: StatusCode.NOT_FOUND - Player 'unknown_player' does not exist!
 ```
+
+---
+
+## 📌 11. Debug Redis Connection (Redis 연결 디버깅)
+```bash
+curl -X GET "http://127.0.0.1:8000/debug/redis"
+```
+✅ **If Redis is working properly, you should see:**  
+✅ **Redis가 정상적으로 작동하면, 다음과 같은 응답을 받을 수 있습니다:**  
+```json
+{"message": "✅ Redis is working properly!", "ping": "PONG"}
+```
+
+If Redis is not connected, you may see an error message like:  
+Redis가 연결되지 않았다면, 다음과 같은 오류 메시지가 표시될 수 있습니다:  
+```json
+{"error": "❌ Redis is in None state!"}
+```
+
+
