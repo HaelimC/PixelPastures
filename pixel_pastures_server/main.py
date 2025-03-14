@@ -70,6 +70,32 @@ def create_player(player_id: str, db: Session = Depends(get_db)):
     except Exception as e:
         logging.info(f"create 오류: {str(e)}")
         return {"error": str(e)}
+    
+@app.get("/players/all")
+async def get_all_players(db: Session = Depends(get_db)):
+    redis = app.state.redis  # Get Redis instance
+
+    # Check if cached data exists
+    cached_players = await redis.get("players:all")
+    if cached_players:
+        return {"players": eval(cached_players), "source": "cache"}
+
+    # If not cached, query the database
+    players = db.query(Player).all()
+    
+    if not players:
+        return {"error": "No players found"}
+
+    # Convert player data to a list of dictionaries
+    players_data = [
+        {"player_id": player.player_id, "x": player.x, "y": player.y, "farm_level": player.farm_level}
+        for player in players
+    ]
+
+    # Store the result in Redis (expire in 60s)
+    await redis.setex("players:all", 60, str(players_data))
+
+    return {"players": players_data, "source": "database"}
 
 # Retrieve player data (GET request)
 @app.get("/players/{player_id}")

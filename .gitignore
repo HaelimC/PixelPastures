@@ -30,3 +30,6 @@ alembic/
 
 # Docker 관련 제외
 docker-compose.override.yml
+
+# Kafka 관련 제외
+kafka_*.py
