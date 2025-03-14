@@ -60,85 +60,46 @@ gRPC Server running on port 50051...
 
 ---
 
-## 📌 6. Run PostgreSQL with Docker (Docker로 PostgreSQL 실행)
+## 📌 **6. Run PostgreSQL & Redis with Docker Compose (Docker Compose로 PostgreSQL & Redis 실행)**
 ```bash
-docker run --name postgres \
-  -e POSTGRES_USER=admin \
-  -e POSTGRES_PASSWORD=admin \
-  -e POSTGRES_DB=pixel_pastures \
-  -p 5432:5432 \
-  -d postgres
+docker-compose up -d
 ```
-✅ **This command will start a PostgreSQL container with:**  
-✅ **이 명령어는 다음 설정으로 PostgreSQL 컨테이너를 실행합니다:**  
-- **Username:** `admin`
-- **Password:** `admin`
-- **Database Name:** `pixel_pastures`
-- **Port:** `5432`
-
-### 🔹 Check running PostgreSQL container (PostgreSQL 실행 상태 확인)
-```bash
-docker ps
-```
-✅ **If PostgreSQL is running successfully, you should see it listed in the output.**  
-✅ **PostgreSQL이 정상적으로 실행 중이라면, 목록에 표시됩니다.**
-
-### 🔹 Restart or Stop PostgreSQL container (PostgreSQL 컨테이너 재시작 또는 중지)
-```bash
-docker restart postgres  # Restart (재시작)
-docker stop postgres     # Stop (중지)
-```
+✅ This command starts both **PostgreSQL** and **Redis** together.  
+✅ 이 명령어는 **PostgreSQL**과 **Redis**를 함께 실행합니다.
 
 ---
 
-## 📌 7. Connect to PostgreSQL (PostgreSQL 접속)
+## 📌 **7. Connect to PostgreSQL (PostgreSQL 접속)**
 ```bash
 docker exec -it postgres psql -U admin -d pixel_pastures
 ```
 ✅ **Now you can execute SQL commands inside PostgreSQL.**  
 ✅ **이제 PostgreSQL 내부에서 SQL 명령어를 실행할 수 있습니다.**
 
-### 🔹 List all tables (현재 데이터베이스의 테이블 확인)
+#### 🔹 **List all tables (현재 데이터베이스의 테이블 확인)**
 ```sql
 \dt
 ```
-
-### 🔹 Exit PostgreSQL shell (PostgreSQL 셸 종료)
+#### 🔹 **Exit PostgreSQL shell (PostgreSQL 셸 종료)**
 ```sql
 \q
 ```
 
 ---
 
-## 📌 8. Run Redis with Docker (Docker로 Redis 실행)
+## 📌 **8. Connect to Redis (Redis 접속)**
 ```bash
-docker run --name redis \
-  -p 6379:6379 \
-  -d redis
+docker exec -it redis redis-cli
 ```
-✅ **This command starts a Redis container with:**  
-✅ **이 명령어는 다음 설정으로 Redis 컨테이너를 실행합니다:**  
-- **Port:** `6379` (default)
+✅ **Now you can execute Redis commands inside the Redis shell.**  
+✅ **이제 Redis 내부에서 명령어를 실행할 수 있습니다.**
 
-### 🔹 Check running Redis container (Redis 실행 상태 확인)
+#### 🔹 **Test Redis Connection (Redis 연결 테스트)**
 ```bash
-docker ps
+ping
 ```
-✅ **If Redis is running successfully, you should see it in the list.**  
-✅ **Redis가 정상적으로 실행 중이라면, 목록에 표시됩니다.**
-
-### 🔹 Restart or Stop Redis container (Redis 컨테이너 재시작 또는 중지)
-```bash
-docker restart redis  # Restart (재시작)
-docker stop redis     # Stop (중지)
-```
-
-### 🔹 Test Redis Connection (Redis 연결 테스트)
-```bash
-docker exec -it redis redis-cli ping
-```
-✅ **If Redis is working properly, you should see the response:**  
-✅ **Redis가 정상적으로 작동하면 다음 응답이 표시됩니다:**  
+✅ **If Redis is working properly, it should return:**  
+✅ **Redis가 정상적으로 작동하면 다음과 같이 표시됩니다:**  
 ```bash
 PONG
 ```
